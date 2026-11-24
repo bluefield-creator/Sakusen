@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title default="Sakusen" suffix=" · Sakusen" phx-no-format>{assigns[:page_title]}</.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <.link navigate={~p"/"} class="site-name">Sakusen</.link>
+      <nav class="account-nav">
+        <%= if @current_scope do %>
+          <span>{@current_scope.user.email}</span>
+          <.link href={~p"/users/settings"}>Settings</.link>
+          <.link href={~p"/users/log-out"} method="delete">Log out</.link>
+        <% else %>
+          <.link href={~p"/users/register"}>Register</.link>
+          <.link href={~p"/users/log-in"}>Log in</.link>
+        <% end %>
+      </nav>
+    </header>
+    {@inner_content}
+  </body>
+</html>
