@@ -48,7 +48,6 @@ defmodule SakusenWeb.Router do
       on_mount: [{SakusenWeb.UserAuth, :require_authenticated}] do
       live "/upload", PostLive.Upload, :new
       live "/users/settings", UserLive.Settings, :edit
-      live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
     end
 
     post "/users/update-password", UserSessionController, :update_password
@@ -63,7 +62,6 @@ defmodule SakusenWeb.Router do
       live "/posts/:id", PostLive.Show, :show
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
-      live "/users/log-in/:token", UserLive.Confirmation, :new
     end
 
     post "/users/log-in", UserSessionController, :create

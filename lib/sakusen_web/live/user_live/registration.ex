@@ -17,7 +17,15 @@ defmodule SakusenWeb.UserLive.Registration do
           </:subtitle>
         </.header>
 
-        <.form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
+        <.form
+          for={@form}
+          id="registration_form"
+          action={~p"/users/log-in?_action=registered"}
+          method="post"
+          phx-submit="save"
+          phx-change="validate"
+          phx-trigger-action={@trigger_submit}
+        >
           <.input
             field={@form[:username]}
             type="text"
@@ -28,10 +36,18 @@ defmodule SakusenWeb.UserLive.Registration do
             phx-mounted={JS.focus()}
           />
           <.input
-            field={@form[:email]}
-            type="email"
-            label="Email"
-            autocomplete="email"
+            field={@form[:password]}
+            type="password"
+            label="Password"
+            autocomplete="new-password"
+            spellcheck="false"
+            required
+          />
+          <.input
+            field={@form[:password_confirmation]}
+            type="password"
+            label="Confirm password"
+            autocomplete="new-password"
             spellcheck="false"
             required
           />
@@ -52,28 +68,20 @@ defmodule SakusenWeb.UserLive.Registration do
   end
 
   def mount(_params, _session, socket) do
-    changeset = Accounts.change_user_registration(%User{}, %{}, validate_unique: false)
+    changeset =
+      Accounts.change_user_registration(%User{}, %{},
+        validate_unique: false,
+        hash_password: false
+      )
 
-    {:ok, assign_form(socket, changeset), temporary_assigns: [form: nil]}
+    {:ok, socket |> assign(trigger_submit: false) |> assign_form(changeset)}
   end
 
   @impl true
   def handle_event("save", %{"user" => user_params}, socket) do
     case Accounts.register_user(user_params) do
-      {:ok, user} ->
-        {:ok, _} =
-          Accounts.deliver_login_instructions(
-            user,
-            &url(~p"/users/log-in/#{&1}")
-          )
-
-        {:noreply,
-         socket
-         |> put_flash(
-           :info,
-           "An email was sent to #{user.email}, please access it to confirm your account."
-         )
-         |> push_navigate(to: ~p"/users/log-in")}
+      {:ok, _user} ->
+        {:noreply, assign(socket, trigger_submit: true, form: to_form(user_params, as: "user"))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
@@ -81,12 +89,16 @@ defmodule SakusenWeb.UserLive.Registration do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
-    changeset = Accounts.change_user_registration(%User{}, user_params, validate_unique: false)
+    changeset =
+      Accounts.change_user_registration(%User{}, user_params,
+        validate_unique: false,
+        hash_password: false
+      )
+
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    form = to_form(changeset, as: "user")
-    assign(socket, form: form)
+    assign(socket, form: to_form(changeset, as: "user"))
   end
 end
