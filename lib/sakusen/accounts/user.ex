@@ -4,6 +4,7 @@ defmodule Sakusen.Accounts.User do
 
   schema "users" do
     field :email, :string
+    field :username, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :utc_datetime
@@ -27,6 +28,29 @@ defmodule Sakusen.Accounts.User do
     user
     |> cast(attrs, [:email])
     |> validate_email(opts)
+  end
+
+  def registration_changeset(user, attrs, opts \\ []) do
+    user
+    |> cast(attrs, [:email, :username])
+    |> update_change(:username, &String.downcase/1)
+    |> validate_required([:username])
+    |> validate_length(:username, min: 3, max: 32)
+    |> validate_format(:username, ~r/^[a-z0-9_]+$/,
+      message: "only letters, digits and underscores"
+    )
+    |> validate_username_unique(opts)
+    |> validate_email(opts)
+  end
+
+  defp validate_username_unique(changeset, opts) do
+    if Keyword.get(opts, :validate_unique, true) do
+      changeset
+      |> unsafe_validate_unique(:username, Sakusen.Repo)
+      |> unique_constraint(:username)
+    else
+      changeset
+    end
   end
 
   defp validate_email(changeset, opts) do

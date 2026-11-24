@@ -39,3 +39,7 @@ npm-debug.log
 *.db
 *.db-*
 
+
+# Uploaded media and test media.
+/media/
+/tmp/

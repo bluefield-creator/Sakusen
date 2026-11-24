@@ -1,3 +1,5 @@
+System.put_env("VIX_COMPILATION_MODE", "PLATFORM_PROVIDED_LIBVIPS")
+
 defmodule Sakusen.MixProject do
   use Mix.Project
 
@@ -58,7 +60,8 @@ defmodule Sakusen.MixProject do
       {:gettext, "~> 1.0"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:image, "~> 0.73.0"}
     ]
   end
 

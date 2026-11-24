@@ -27,6 +27,11 @@ defmodule SakusenWeb.Endpoint do
     only: SakusenWeb.static_paths(),
     raise_on_missing_only: code_reloading?
 
+  plug Plug.Static,
+    at: Sakusen.Posts.Storage.url_prefix(),
+    from: {Sakusen.Posts.Storage, :root, []},
+    only: ~w(original thumbnail)
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do

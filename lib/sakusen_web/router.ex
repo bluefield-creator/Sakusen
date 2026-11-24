@@ -17,12 +17,6 @@ defmodule SakusenWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", SakusenWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
-  end
-
   # Other scopes may use custom stacks.
   # scope "/api", SakusenWeb do
   #   pipe_through :api
@@ -52,6 +46,7 @@ defmodule SakusenWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{SakusenWeb.UserAuth, :require_authenticated}] do
+      live "/upload", PostLive.Upload, :new
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
     end
@@ -64,6 +59,8 @@ defmodule SakusenWeb.Router do
 
     live_session :current_user,
       on_mount: [{SakusenWeb.UserAuth, :mount_current_scope}] do
+      live "/", PostLive.Index, :index
+      live "/posts/:id", PostLive.Show, :show
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new

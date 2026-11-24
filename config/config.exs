@@ -22,7 +22,8 @@ config :sakusen, :scopes,
 
 config :sakusen,
   ecto_repos: [Sakusen.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  media_root: Path.expand("../media", __DIR__)
 
 # Configure the endpoint
 config :sakusen, SakusenWeb.Endpoint,

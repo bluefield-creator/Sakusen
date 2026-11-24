@@ -41,6 +41,10 @@ if config_env() == :dev do
 end
 
 if config_env() == :prod do
+  config :sakusen,
+    media_root:
+      System.get_env("MEDIA_ROOT") || raise("environment variable MEDIA_ROOT is missing.")
+
   database_path =
     System.get_env("DATABASE_PATH") ||
       raise """
