@@ -7,9 +7,9 @@ defmodule SakusenWeb.UserLive.LoginTest do
   test "renders login page", %{conn: conn} do
     {:ok, _lv, html} = live(conn, ~p"/users/log-in")
 
-    assert html =~ "Log in"
-    assert html =~ "Sign up"
-    assert html =~ "Remember me"
+    assert html =~ "log in"
+    assert html =~ "register"
+    assert html =~ "remember me"
   end
 
   test "logs in with valid credentials", %{conn: conn} do
@@ -34,7 +34,7 @@ defmodule SakusenWeb.UserLive.LoginTest do
     render_submit(form)
     conn = follow_trigger_action(form, conn)
 
-    assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid username or password"
+    assert Phoenix.Flash.get(conn.assigns.flash, :error) == "wrong username or password"
     assert redirected_to(conn) == ~p"/users/log-in"
   end
 
@@ -42,7 +42,7 @@ defmodule SakusenWeb.UserLive.LoginTest do
     user = user_fixture()
     {:ok, _lv, html} = conn |> log_in_user(user) |> live(~p"/users/log-in")
 
-    assert html =~ "You need to reauthenticate"
+    assert html =~ "confirm it&#39;s you"
     assert html =~ ~s(value="#{user.username}")
   end
 end

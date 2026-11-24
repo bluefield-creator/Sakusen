@@ -16,7 +16,7 @@ defmodule SakusenWeb.UserSessionControllerTest do
 
       assert get_session(conn, :user_token)
       assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) == "Welcome back!"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) == "welcome back"
 
       response = conn |> get(~p"/") |> html_response(200)
       assert response =~ user.username
@@ -44,7 +44,7 @@ defmodule SakusenWeb.UserSessionControllerTest do
 
       assert get_session(conn, :user_token)
       assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) == "Welcome!"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) == "welcome"
     end
 
     test "redirects back with the username kept on invalid credentials", %{
@@ -58,7 +58,7 @@ defmodule SakusenWeb.UserSessionControllerTest do
 
       refute get_session(conn, :user_token)
       assert redirected_to(conn) == ~p"/users/log-in"
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid username or password"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "wrong username or password"
       assert Phoenix.Flash.get(conn.assigns.flash, :username) == user.username
     end
   end
@@ -68,7 +68,7 @@ defmodule SakusenWeb.UserSessionControllerTest do
       conn = conn |> log_in_user(user) |> delete(~p"/users/log-out")
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "logged out"
     end
   end
 end

@@ -22,9 +22,9 @@ defmodule SakusenWeb.PostLive.Show do
           </section>
 
           <dl class="post-info">
-            <dt>ID</dt>
+            <dt>id</dt>
             <dd>{@post.id}</dd>
-            <dt>Uploader</dt>
+            <dt>by</dt>
             <dd>
               <.link
                 :if={@post.uploader}
@@ -33,26 +33,26 @@ defmodule SakusenWeb.PostLive.Show do
                 {@post.uploader.username}
               </.link>
             </dd>
-            <dt>Date</dt>
+            <dt>date</dt>
             <dd>
               <time datetime={DateTime.to_iso8601(@post.inserted_at)}>
                 {Calendar.strftime(@post.inserted_at, "%Y-%m-%d %H:%M")}
               </time>
             </dd>
-            <dt>Size</dt>
+            <dt>file</dt>
             <dd>{human_file_size(@post.file_size)}</dd>
-            <dt>Dimensions</dt>
+            <dt>size</dt>
             <dd>{@post.width}×{@post.height}</dd>
-            <dt>Rating</dt>
+            <dt>rating</dt>
             <dd>{@post.rating}</dd>
-            <dt>Source</dt>
+            <dt>source</dt>
             <dd>
               <a :if={web_url?(@post.source)} href={@post.source} rel="noopener noreferrer nofollow">
                 {@post.source}
               </a>
               <span :if={!web_url?(@post.source)}>{@post.source}</span>
             </dd>
-            <dt>MD5</dt>
+            <dt>md5</dt>
             <dd>{@post.md5}</dd>
           </dl>
         </aside>
@@ -78,7 +78,7 @@ defmodule SakusenWeb.PostLive.Show do
 
     {:ok,
      assign(socket,
-       page_title: "Post ##{post.id}",
+       page_title: "post ##{post.id}",
        post: post,
        tag_groups: Tags.tags_by_category(post)
      )}

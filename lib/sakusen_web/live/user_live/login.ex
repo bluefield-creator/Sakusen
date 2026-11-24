@@ -7,12 +7,12 @@ defmodule SakusenWeb.UserLive.Login do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <section class="auth-panel">
         <.header>
-          Log in
+          log in
           <:subtitle>
             <%= if @current_scope do %>
-              You need to reauthenticate to perform sensitive actions on your account.
+              confirm it's you
             <% else %>
-              Don't have an account? <.link navigate={~p"/users/register"} phx-no-format>Sign up</.link> for an account now.
+              or <.link navigate={~p"/users/register"} class="bracketed">register</.link>
             <% end %>
           </:subtitle>
         </.header>
@@ -28,7 +28,7 @@ defmodule SakusenWeb.UserLive.Login do
             readonly={!!@current_scope}
             field={@form[:username]}
             type="text"
-            label="Username"
+            label="username"
             autocomplete="username"
             spellcheck="false"
             required
@@ -37,15 +37,13 @@ defmodule SakusenWeb.UserLive.Login do
           <.input
             field={@form[:password]}
             type="password"
-            label="Password"
+            label="password"
             autocomplete="current-password"
             spellcheck="false"
             required
           />
-          <.input type="checkbox" field={@form[:remember_me]} label="Remember me" />
-          <.button variant="primary" phx-disable-with="Logging in...">
-            Log in <span aria-hidden="true">→</span>
-          </.button>
+          <.input type="checkbox" field={@form[:remember_me]} label="remember me" />
+          <.button variant="primary" phx-disable-with="logging in...">log in</.button>
         </.form>
       </section>
     </Layouts.app>

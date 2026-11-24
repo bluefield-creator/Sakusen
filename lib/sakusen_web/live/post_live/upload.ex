@@ -9,7 +9,7 @@ defmodule SakusenWeb.PostLive.Upload do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <section class="upload-panel">
-        <.header>Upload</.header>
+        <.header>upload</.header>
 
         <.form for={@form} id="upload_form" phx-submit="save" phx-change="validate">
           <div class="dropzone" phx-drop-target={@uploads.file.ref}>
@@ -26,7 +26,7 @@ defmodule SakusenWeb.PostLive.Upload do
               {entry.client_name}
               <progress value={entry.progress} max="100">{entry.progress}%</progress>
               <button type="button" class="button" phx-click="cancel" phx-value-ref={entry.ref}>
-                Remove
+                remove
               </button>
             </figcaption>
             <p :for={error <- upload_errors(@uploads.file, entry)} class="field-error">
@@ -37,20 +37,21 @@ defmodule SakusenWeb.PostLive.Upload do
           <p :if={@upload_error} class="field-error">{@upload_error}</p>
 
           <p :if={@duplicate} class="notice">
-            This file has already been uploaded as <.link navigate={~p"/posts/#{@duplicate}"}>post #{@duplicate.id}</.link>.
+            already posted as
+            <.link navigate={~p"/posts/#{@duplicate}"} class="bracketed">post #{@duplicate.id}</.link>
           </p>
 
-          <.input field={@form[:rating]} type="select" label="Rating" options={rating_options()} />
+          <.input field={@form[:rating]} type="select" label="rating" options={rating_options()} />
           <.input
             field={@form[:tags]}
             type="textarea"
-            label="Tags"
+            label="tags"
             placeholder="blue_sky artist:name"
             spellcheck="false"
           />
-          <.input field={@form[:source]} type="url" label="Source" placeholder="https://" />
+          <.input field={@form[:source]} type="url" label="source" placeholder="https://" />
 
-          <.button phx-disable-with="Uploading..." variant="primary">Upload</.button>
+          <.button phx-disable-with="uploading..." variant="primary">upload</.button>
         </.form>
       </section>
     </Layouts.app>
@@ -114,35 +115,31 @@ defmodule SakusenWeb.PostLive.Upload do
       [{:ok, post}] ->
         {:noreply,
          socket
-         |> put_flash(:info, "Post ##{post.id} uploaded.")
+         |> put_flash(:info, "post ##{post.id} uploaded")
          |> push_navigate(to: ~p"/posts/#{post}")}
 
       [{:error, {:duplicate, existing}}] ->
         {:noreply, assign(socket, duplicate: existing)}
 
       [{:error, :unsupported_format}] ->
-        {:noreply,
-         assign(socket, upload_error: "Only JPEG, PNG, GIF and WebP images are supported.")}
+        {:noreply, assign(socket, upload_error: upload_error_message(:not_accepted))}
 
       [{:error, _reason}] ->
-        {:noreply, assign(socket, upload_error: "The file could not be processed.")}
+        {:noreply, assign(socket, upload_error: "couldn't process file")}
 
       [] ->
-        {:noreply, assign(socket, upload_error: "Choose a file to upload.")}
+        {:noreply, assign(socket, upload_error: "choose a file")}
     end
   end
 
   defp assign_form(socket, changeset), do: assign(socket, form: to_form(changeset, as: "post"))
 
   defp rating_options do
-    Enum.map(Post.ratings(), &{&1 |> Atom.to_string() |> String.capitalize(), &1})
+    Enum.map(Post.ratings(), &{Atom.to_string(&1), &1})
   end
 
-  defp upload_error_message(:too_large), do: "The file is larger than 50 MB."
-
-  defp upload_error_message(:not_accepted),
-    do: "Only JPEG, PNG, GIF and WebP images are supported."
-
-  defp upload_error_message(:too_many_files), do: "Upload one file at a time."
-  defp upload_error_message(_error), do: "The file could not be uploaded."
+  defp upload_error_message(:too_large), do: "over 50 MB"
+  defp upload_error_message(:not_accepted), do: "jpeg, png, gif or webp only"
+  defp upload_error_message(:too_many_files), do: "one file at a time"
+  defp upload_error_message(_error), do: "upload failed"
 end

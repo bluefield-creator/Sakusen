@@ -10,8 +10,7 @@ defmodule SakusenWeb.UserLive.Settings do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Account Settings
-        <:subtitle>Change your password</:subtitle>
+        settings
       </.header>
 
       <.form
@@ -32,7 +31,7 @@ defmodule SakusenWeb.UserLive.Settings do
         <.input
           field={@password_form[:password]}
           type="password"
-          label="New password"
+          label="new password"
           autocomplete="new-password"
           spellcheck="false"
           required
@@ -40,13 +39,11 @@ defmodule SakusenWeb.UserLive.Settings do
         <.input
           field={@password_form[:password_confirmation]}
           type="password"
-          label="Confirm new password"
+          label="confirm password"
           autocomplete="new-password"
           spellcheck="false"
         />
-        <.button variant="primary" phx-disable-with="Saving...">
-          Save Password
-        </.button>
+        <.button variant="primary" phx-disable-with="saving...">save</.button>
       </.form>
     </Layouts.app>
     """

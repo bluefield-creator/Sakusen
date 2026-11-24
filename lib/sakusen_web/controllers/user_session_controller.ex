@@ -5,11 +5,11 @@ defmodule SakusenWeb.UserSessionController do
   alias SakusenWeb.UserAuth
 
   def create(conn, %{"_action" => "registered"} = params) do
-    create(conn, params, "Welcome!")
+    create(conn, params, "welcome")
   end
 
   def create(conn, params) do
-    create(conn, params, "Welcome back!")
+    create(conn, params, "welcome back")
   end
 
   defp create(conn, %{"user" => user_params}, info) do
@@ -21,7 +21,7 @@ defmodule SakusenWeb.UserSessionController do
       |> UserAuth.log_in_user(user, user_params)
     else
       conn
-      |> put_flash(:error, "Invalid username or password")
+      |> put_flash(:error, "wrong username or password")
       |> put_flash(:username, String.slice(username, 0, 32))
       |> redirect(to: ~p"/users/log-in")
     end
@@ -36,12 +36,12 @@ defmodule SakusenWeb.UserSessionController do
 
     conn
     |> put_session(:user_return_to, ~p"/users/settings")
-    |> create(params, "Password updated successfully!")
+    |> create(params, "password updated")
   end
 
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
+    |> put_flash(:info, "logged out")
     |> UserAuth.log_out_user()
   end
 end

@@ -8,7 +8,7 @@ defmodule SakusenWeb.UserLive.SettingsTest do
   test "redirects if user is not logged in", %{conn: conn} do
     assert {:error, {:redirect, %{to: path, flash: flash}}} = live(conn, ~p"/users/settings")
     assert path == ~p"/users/log-in"
-    assert %{"error" => "You must log in to access this page."} = flash
+    assert %{"error" => "log in first"} = flash
   end
 
   test "redirects if user is not in sudo mode", %{conn: conn} do
@@ -20,7 +20,7 @@ defmodule SakusenWeb.UserLive.SettingsTest do
       |> live(~p"/users/settings")
       |> follow_redirect(conn, ~p"/users/log-in")
 
-    assert conn.resp_body =~ "You must re-authenticate to access this page."
+    assert conn.resp_body =~ "log in again"
   end
 
   describe "update password form" do
@@ -49,7 +49,7 @@ defmodule SakusenWeb.UserLive.SettingsTest do
       assert get_session(new_password_conn, :user_token) != get_session(conn, :user_token)
 
       assert Phoenix.Flash.get(new_password_conn.assigns.flash, :info) =~
-               "Password updated successfully"
+               "password updated"
 
       assert Accounts.get_user_by_username_and_password(user.username, new_password)
     end

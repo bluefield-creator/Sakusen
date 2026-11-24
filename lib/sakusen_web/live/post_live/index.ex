@@ -18,7 +18,7 @@ defmodule SakusenWeb.PostLive.Index do
           autocomplete="off"
           spellcheck="false"
         />
-        <.button variant="primary">Search</.button>
+        <.button variant="primary">search</.button>
       </form>
 
       <p :if={@error} class="search-error" role="alert">{@error}</p>
@@ -31,12 +31,12 @@ defmodule SakusenWeb.PostLive.Index do
         </li>
       </ul>
 
-      <p :if={@posts == [] and !@error} class="empty-state">No posts match.</p>
+      <p :if={@posts == [] and !@error} class="empty-state">nothing found</p>
 
       <nav class="pager" aria-label="Pages">
-        <.link :if={@page > 1} patch={search_path(@query, @page - 1)} rel="prev">Previous</.link>
-        <span class="pager-current">Page {@page}</span>
-        <.link :if={@has_next?} patch={search_path(@query, @page + 1)} rel="next">Next</.link>
+        <.link :if={@page > 1} patch={search_path(@query, @page - 1)} rel="prev">prev</.link>
+        <span class="pager-current">{@page}</span>
+        <.link :if={@has_next?} patch={search_path(@query, @page + 1)} rel="next">next</.link>
       </nav>
     </Layouts.app>
     """

@@ -10,10 +10,9 @@ defmodule SakusenWeb.UserLive.Registration do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <section class="auth-panel">
         <.header>
-          Register for an account
+          register
           <:subtitle>
-            Already registered? <.link navigate={~p"/users/log-in"}>Log in</.link>
-            to your account now.
+            or <.link navigate={~p"/users/log-in"} class="bracketed">log in</.link>
           </:subtitle>
         </.header>
 
@@ -29,7 +28,7 @@ defmodule SakusenWeb.UserLive.Registration do
           <.input
             field={@form[:username]}
             type="text"
-            label="Username"
+            label="username"
             autocomplete="username"
             spellcheck="false"
             required
@@ -38,7 +37,7 @@ defmodule SakusenWeb.UserLive.Registration do
           <.input
             field={@form[:password]}
             type="password"
-            label="Password"
+            label="password"
             autocomplete="new-password"
             spellcheck="false"
             required
@@ -46,15 +45,13 @@ defmodule SakusenWeb.UserLive.Registration do
           <.input
             field={@form[:password_confirmation]}
             type="password"
-            label="Confirm password"
+            label="confirm password"
             autocomplete="new-password"
             spellcheck="false"
             required
           />
 
-          <.button phx-disable-with="Creating account..." variant="primary">
-            Create an account
-          </.button>
+          <.button phx-disable-with="creating..." variant="primary">create account</.button>
         </.form>
       </section>
     </Layouts.app>
