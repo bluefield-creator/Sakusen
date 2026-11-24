@@ -12,7 +12,7 @@ defmodule SakusenWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <main class="page">
+    <main id="content" class="page">
       {render_slot(@inner_block)}
     </main>
 

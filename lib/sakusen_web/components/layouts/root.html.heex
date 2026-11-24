@@ -10,11 +10,16 @@
     </script>
   </head>
   <body>
+    <a href="#content" class="skip-link">Skip to content</a>
     <header class="site-header">
       <.link navigate={~p"/"} class="site-name">Sakusen</.link>
-      <nav class="account-nav">
+      <nav class="primary-nav" aria-label="Main">
+        <.link navigate={~p"/"}>Posts</.link>
+        <.link navigate={~p"/upload"}>Upload</.link>
+      </nav>
+      <nav class="account-nav" aria-label="Account">
         <%= if @current_scope do %>
-          <span>{@current_scope.user.email}</span>
+          <span class="account-name">{@current_scope.user.username}</span>
           <.link href={~p"/users/settings"}>Settings</.link>
           <.link href={~p"/users/log-out"} method="delete">Log out</.link>
         <% else %>
