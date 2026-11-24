@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="glow-crimson" cx="0.72" cy="0.92" r="0.75">
+      <stop offset="0" stop-color="#96103c" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#96103c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-violet" cx="0.12" cy="0.5" r="0.7">
+      <stop offset="0" stop-color="#3a1a52" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#3a1a52" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="bloom" x="-1" y="-1" width="3" height="3">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" fill="#09070c"/>
+  <rect width="512" height="512" fill="url(#glow-violet)"/>
+  <rect width="512" height="512" fill="url(#glow-crimson)"/>
+
+  <g fill="none" stroke="#030205" stroke-width="3" stroke-linecap="round">
+    <path d="M-10 196 C 120 250, 390 250, 522 182"/>
+    <path d="M-10 214 C 120 272, 390 272, 522 202"/>
+    <path d="M-10 300 C 140 352, 372 352, 522 290"/>
+  </g>
+
+  <g fill="none" stroke="#cdc8d2" stroke-width="16" stroke-linecap="square">
+    <path d="M196 160 H156 V352 H196"/>
+    <path d="M316 160 H356 V352 H316"/>
+  </g>
+
+  <rect x="226" y="226" width="60" height="60" fill="#d6224f" filter="url(#bloom)" opacity="0.9"/>
+  <rect x="226" y="226" width="60" height="60" fill="#d6224f"/>
+</svg>
