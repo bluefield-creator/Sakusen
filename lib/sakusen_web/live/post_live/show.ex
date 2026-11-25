@@ -2,7 +2,7 @@ defmodule SakusenWeb.PostLive.Show do
   use SakusenWeb, :live_view
 
   alias Sakusen.Posts
-  alias Sakusen.Posts.Storage
+  alias Sakusen.Posts.Media
   alias Sakusen.Tags
 
   @impl true
@@ -26,10 +26,7 @@ defmodule SakusenWeb.PostLive.Show do
             <dd>{@post.id}</dd>
             <dt>by</dt>
             <dd>
-              <.link
-                :if={@post.uploader}
-                navigate={~p"/?#{[tags: "user:" <> @post.uploader.username]}"}
-              >
+              <.link :if={@post.uploader} navigate={~p"/u/#{@post.uploader.username}"}>
                 {@post.uploader.username}
               </.link>
             </dd>
@@ -58,9 +55,9 @@ defmodule SakusenWeb.PostLive.Show do
         </aside>
 
         <figure class="post-media">
-          <a href={Storage.original_url(@post)}>
+          <a href={Media.original_url(@post)}>
             <img
-              src={Storage.original_url(@post)}
+              src={Media.original_url(@post)}
               alt={Enum.map_join(@post.tags, " ", & &1.name)}
               width={@post.width}
               height={@post.height}

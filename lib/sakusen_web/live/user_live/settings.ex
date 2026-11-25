@@ -11,6 +11,9 @@ defmodule SakusenWeb.UserLive.Settings do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
         settings
+        <:actions>
+          <.link navigate={~p"/users/settings/profile"} class="bracketed">profile</.link>
+        </:actions>
       </.header>
 
       <.form

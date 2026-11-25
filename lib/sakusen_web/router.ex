@@ -48,6 +48,8 @@ defmodule SakusenWeb.Router do
       on_mount: [{SakusenWeb.UserAuth, :require_authenticated}] do
       live "/upload", PostLive.Upload, :new
       live "/users/settings", UserLive.Settings, :edit
+      live "/users/settings/profile", UserLive.ProfileSettings, :edit
+      live "/admin/settings", AdminLive.Settings, :edit
     end
 
     post "/users/update-password", UserSessionController, :update_password
@@ -60,6 +62,7 @@ defmodule SakusenWeb.Router do
       on_mount: [{SakusenWeb.UserAuth, :mount_current_scope}] do
       live "/", PostLive.Index, :index
       live "/posts/:id", PostLive.Show, :show
+      live "/u/:username", UserLive.Profile, :show
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
     end

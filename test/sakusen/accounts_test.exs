@@ -41,6 +41,11 @@ defmodule Sakusen.AccountsTest do
 
       assert "has already been taken" in errors_on(changeset).username
     end
+
+    test "makes only the first registered user an admin" do
+      assert %User{role: :admin} = user_fixture()
+      assert %User{role: :user} = user_fixture()
+    end
   end
 
   describe "get_user_by_username_and_password/2" do

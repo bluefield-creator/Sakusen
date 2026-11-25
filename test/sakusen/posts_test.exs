@@ -4,12 +4,13 @@ defmodule Sakusen.PostsTest do
   import Sakusen.AccountsFixtures
 
   alias Sakusen.Posts
-  alias Sakusen.Posts.{Post, Storage}
+  alias Sakusen.Posts.{Media, Post}
+  alias Sakusen.Storage.Local
 
   @moduletag :tmp_dir
 
   setup %{tmp_dir: tmp_dir} do
-    on_exit(fn -> File.rm_rf!(Storage.root()) end)
+    on_exit(fn -> File.rm_rf!(Local.root()) end)
 
     named_path = Path.join(tmp_dir, "red.png")
     Image.write!(Image.new!(4, 3, color: :red), named_path)
@@ -38,8 +39,8 @@ defmodule Sakusen.PostsTest do
              :crypto.hash(:sha256, File.read!(png_path)) |> Base.encode16(case: :lower)
 
     assert Enum.map(post.tags, & &1.name) == ["red_square"]
-    assert File.exists?(Storage.original_path(post))
-    assert File.exists?(Storage.thumbnail_path(post))
+    assert File.exists?(Path.join(Local.root(), Media.original_key(post)))
+    assert File.exists?(Path.join(Local.root(), Media.thumbnail_key(post)))
   end
 
   test "create_post/2 returns the existing post for a duplicate file", %{

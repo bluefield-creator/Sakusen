@@ -1,7 +1,8 @@
 defmodule SakusenWeb.PostLive.Index do
   use SakusenWeb, :live_view
 
-  alias Sakusen.Posts.Storage
+  import SakusenWeb.PostComponents
+
   alias Sakusen.Search
 
   @impl true
@@ -24,11 +25,7 @@ defmodule SakusenWeb.PostLive.Index do
       <p :if={@error} class="search-error" role="alert">{@error}</p>
 
       <ul class="post-grid">
-        <li :for={post <- @posts} class="post-thumb" data-rating={post.rating}>
-          <.link navigate={~p"/posts/#{post}"}>
-            <img src={Storage.thumbnail_url(post)} alt={"Post #{post.id}"} loading="lazy" />
-          </.link>
-        </li>
+        <.post_thumb :for={post <- @posts} post={post} />
       </ul>
 
       <p :if={@posts == [] and !@error} class="empty-state">nothing found</p>

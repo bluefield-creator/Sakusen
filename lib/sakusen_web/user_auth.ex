@@ -194,6 +194,10 @@ defmodule SakusenWeb.UserAuth do
       on user_token.
       Redirects to login page if there's no logged user.
 
+    * `:require_admin` - Redirects to the home page unless the
+      current_scope belongs to an admin. Expects `:require_authenticated`
+      to have run first.
+
   ## Examples
 
   Use the `on_mount` lifecycle macro in LiveViews to mount or authenticate
@@ -241,6 +245,21 @@ defmodule SakusenWeb.UserAuth do
         socket
         |> Phoenix.LiveView.put_flash(:error, "log in again")
         |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
+
+      {:halt, socket}
+    end
+  end
+
+  def on_mount(:require_admin, _params, session, socket) do
+    socket = mount_current_scope(socket, session)
+
+    if Scope.admin?(socket.assigns.current_scope) do
+      {:cont, socket}
+    else
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(:error, "admins only")
+        |> Phoenix.LiveView.redirect(to: ~p"/")
 
       {:halt, socket}
     end

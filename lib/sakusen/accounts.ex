@@ -1,13 +1,19 @@
 defmodule Sakusen.Accounts do
-  @moduledoc "User accounts: registration, credentials and sessions."
+  @moduledoc "User accounts: registration, credentials, sessions and profiles."
 
   import Ecto.Query, warn: false
   alias Sakusen.Repo
 
   alias Sakusen.Accounts.{User, UserToken}
+  alias Sakusen.Accounts.{ProfileImage, Scope}
+  alias Sakusen.Storage
 
   def get_user_by_username(username) when is_binary(username) do
     Repo.get_by(User, username: String.downcase(username))
+  end
+
+  def get_user_by_username!(username) when is_binary(username) do
+    Repo.get_by!(User, username: String.downcase(username))
   end
 
   def get_user_by_username_and_password(username, password)
@@ -19,9 +25,20 @@ defmodule Sakusen.Accounts do
   def get_user!(id), do: Repo.get!(User, id)
 
   def register_user(attrs) do
-    %User{}
-    |> User.registration_changeset(attrs)
-    |> Repo.insert()
+    Repo.transact(fn ->
+      %User{}
+      |> User.registration_changeset(attrs)
+      |> grant_admin_to_first_user()
+      |> Repo.insert()
+    end)
+  end
+
+  defp grant_admin_to_first_user(changeset) do
+    if Repo.exists?(User) do
+      changeset
+    else
+      Ecto.Changeset.put_change(changeset, :role, :admin)
+    end
   end
 
   def change_user_registration(user, attrs \\ %{}, opts \\ []) do
@@ -61,6 +78,45 @@ defmodule Sakusen.Accounts do
     Repo.delete_all(from(UserToken, where: [token: ^token, context: "session"]))
     :ok
   end
+
+  def change_user_profile(user, attrs \\ %{}) do
+    User.profile_changeset(user, attrs)
+  end
+
+  def update_user_profile(%Scope{user: user}, attrs) do
+    user
+    |> User.profile_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def update_user_avatar(%Scope{user: user}, path), do: replace_profile_image(user, :avatar, path)
+
+  def update_user_banner(%Scope{user: user}, path), do: replace_profile_image(user, :banner, path)
+
+  def avatar_url(%User{avatar_key: key}), do: key && Storage.url(key)
+
+  def banner_url(%User{banner_key: key}), do: key && Storage.url(key)
+
+  defp replace_profile_image(user, kind, path) do
+    field = profile_image_field(kind)
+    previous_key = Map.fetch!(user, field)
+
+    with {:ok, %{key: key, data: data}} <- ProfileImage.process(kind, path),
+         :ok <- Storage.put(key, {:data, data}, "image/webp") do
+      case user |> Ecto.Changeset.change(%{field => key}) |> Repo.update() do
+        {:ok, updated} ->
+          if previous_key && previous_key != key, do: Storage.delete(previous_key)
+          {:ok, updated}
+
+        {:error, _changeset} = error ->
+          if previous_key != key, do: Storage.delete(key)
+          error
+      end
+    end
+  end
+
+  defp profile_image_field(:avatar), do: :avatar_key
+  defp profile_image_field(:banner), do: :banner_key
 
   defp update_user_and_delete_all_tokens(changeset) do
     Repo.transact(fn ->

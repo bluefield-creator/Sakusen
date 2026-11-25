@@ -19,7 +19,12 @@
       </nav>
       <nav class="account-nav" aria-label="Account">
         <%= if @current_scope do %>
-          <span class="account-name">{@current_scope.user.username}</span>
+          <.link navigate={~p"/u/#{@current_scope.user.username}"} class="account-name">
+            {@current_scope.user.username}
+          </.link>
+          <.link :if={Sakusen.Accounts.Scope.admin?(@current_scope)} href={~p"/admin/settings"}>
+            admin
+          </.link>
           <.link href={~p"/users/settings"}>settings</.link>
           <.link href={~p"/users/log-out"} method="delete">log out</.link>
         <% else %>

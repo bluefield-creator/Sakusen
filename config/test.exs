@@ -38,6 +38,9 @@ config :phoenix_live_view,
 
 config :sakusen, media_root: Path.expand("../tmp/test_media", __DIR__)
 
+config :sakusen, Sakusen.Storage.S3,
+  req_options: [plug: {Req.Test, Sakusen.Storage.S3}, retry: false]
+
 # Sort query params output of verified routes for robust url comparisons
 config :phoenix,
   sort_verified_routes_query_params: true

@@ -1,9 +1,12 @@
 defmodule Sakusen.Posts do
   @moduledoc "Uploading, storing and retrieving posts and their media files."
 
-  alias Sakusen.Accounts.Scope
-  alias Sakusen.Posts.{Post, Storage}
+  import Ecto.Query, only: [from: 2]
+
+  alias Sakusen.Accounts.{Scope, User}
+  alias Sakusen.Posts.{Media, Post}
   alias Sakusen.Repo
+  alias Sakusen.Storage
   alias Sakusen.Tags
 
   @file_exts_by_loader %{
@@ -20,6 +23,10 @@ defmodule Sakusen.Posts do
     Post
     |> Repo.get!(id)
     |> Repo.preload([:uploader, :tags])
+  end
+
+  def count_posts_by_uploader(%User{id: uploader_id}) do
+    Repo.aggregate(from(p in Post, where: p.uploader_id == ^uploader_id), :count)
   end
 
   def change_post_metadata(post \\ %Post{}, attrs \\ %{}) do
@@ -97,19 +104,18 @@ defmodule Sakusen.Posts do
   end
 
   defp store_media(post, source_path, image) do
-    original_path = Storage.original_path(post)
-    thumbnail_path = Storage.thumbnail_path(post)
+    original_key = Media.original_key(post)
+    thumbnail_key = Media.thumbnail_key(post)
 
-    with :ok <- File.mkdir_p(Path.dirname(original_path)),
-         :ok <- File.cp(source_path, original_path),
-         :ok <- File.mkdir_p(Path.dirname(thumbnail_path)),
+    with :ok <- Storage.put(original_key, {:path, source_path}, MIME.type(post.file_ext)),
          {:ok, thumbnail} <- Image.thumbnail(image, @thumbnail_box, resize: :down),
-         {:ok, _thumbnail} <- Image.write(thumbnail, thumbnail_path) do
+         {:ok, webp} <- Image.write(thumbnail, :memory, suffix: ".webp"),
+         :ok <- Storage.put(thumbnail_key, {:data, webp}, "image/webp") do
       :ok
     else
       error ->
-        File.rm(original_path)
-        File.rm(thumbnail_path)
+        Storage.delete(original_key)
+        Storage.delete(thumbnail_key)
         error
     end
   end

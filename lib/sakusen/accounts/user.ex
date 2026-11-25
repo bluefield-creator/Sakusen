@@ -9,6 +9,11 @@ defmodule Sakusen.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :authenticated_at, :utc_datetime, virtual: true
+    field :role, Ecto.Enum, values: [:user, :admin], default: :user
+    field :display_name, :string
+    field :bio, :string
+    field :avatar_key, :string
+    field :banner_key, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -26,6 +31,14 @@ defmodule Sakusen.Accounts.User do
     |> cast(attrs, [:password])
     |> validate_confirmation(:password, message: "does not match password")
     |> validate_password(opts)
+  end
+
+  def profile_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:display_name, :bio])
+    |> update_change(:display_name, &String.trim/1)
+    |> validate_length(:display_name, max: 64)
+    |> validate_length(:bio, max: 1000)
   end
 
   def valid_password?(%__MODULE__{hashed_password: hashed_password}, password)
