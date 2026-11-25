@@ -43,7 +43,7 @@ defmodule SakusenWeb.PostLive.Upload do
 
           <.input field={@form[:rating]} type="select" label="rating" options={rating_options()} />
           <.input
-            field={@form[:tags]}
+            field={@form[:tag_names]}
             type="textarea"
             label="tags"
             placeholder="blue_sky artist:name"
@@ -107,7 +107,7 @@ defmodule SakusenWeb.PostLive.Upload do
            path: path,
            rating: post_params["rating"],
            source: post_params["source"],
-           tags: post_params["tags"]
+           tags: post_params["tag_names"]
          })}
       end)
 
